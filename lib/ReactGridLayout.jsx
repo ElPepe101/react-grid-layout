@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import PropTypes from "prop-types";
-import isEqual from "lodash.isequal";
+import { chain, isEqual } from "lodash.isequal";
 import classNames from "classnames";
 import {
   autoBindHandlers,
@@ -95,6 +95,13 @@ export type Props = {
   children: ReactChildrenArray<ReactElement<any>>
 };
 // End Types
+
+// https://stackoverflow.com/questions/37065663/array-of-object-deep-comparison-with-lodash
+const isArrayEqual = function(x, y) {
+  return chain(x)
+    .xorWith(y, isEqual)
+    .isEmpty();
+};
 
 const compactType = (props: Props): CompactType => {
   const { verticalCompact, compactType } = props || {};
@@ -507,7 +514,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   onLayoutMaybeChanged(newLayout: Layout, oldLayout: ?Layout) {
     if (!oldLayout) oldLayout = this.state.layout;
 
-    if (!isEqual(oldLayout, newLayout)) {
+    if (!isArrayEqual(oldLayout, newLayout)) {
       this.props.onLayoutChange(newLayout);
     }
   }
