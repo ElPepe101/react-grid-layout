@@ -2,7 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import isEqual from "lodash.isequal";
-import _ from "lodash/core";
+import _ from "lodash";
 import classNames from "classnames";
 import {
   autoBindHandlers,

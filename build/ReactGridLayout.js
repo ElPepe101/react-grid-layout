@@ -11,7 +11,7 @@ var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _lodash = _interopRequireDefault(require("lodash.isequal"));
 
-var _core = _interopRequireDefault(require("lodash/core"));
+var _lodash2 = _interopRequireDefault(require("lodash"));
 
 var _classnames = _interopRequireDefault(require("classnames"));
 
@@ -189,7 +189,7 @@ function _defineProperty(obj, key, value) {
 // End Types
 // https://stackoverflow.com/questions/37065663/array-of-object-deep-comparison-with-lodash
 var isArrayEqual = function isArrayEqual(x, y) {
-  return (0, _core.default)(x)
+  return (0, _lodash2.default)(x)
     .xorWith(y, _lodash.default)
     .isEmpty();
 };
