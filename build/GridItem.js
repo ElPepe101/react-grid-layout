@@ -209,6 +209,27 @@ function (_React$Component) {
   }
 
   _createClass(GridItem, [{
+    key: "shouldComponentUpdate",
+    value: function shouldComponentUpdate(nextProps
+    /*: Props*/
+    , nextState
+    /*: State*/
+    ) {
+      // We can't deeply compare children. If the developer memoizes them, we can
+      // use this optimization.
+      if (this.props.children !== nextProps.children) return true;
+      if (this.props.droppingPosition !== nextProps.droppingPosition) return true; // TODO memoize these calculations so they don't take so long?
+
+      var oldPosition = (0, _calculateUtils.calcGridItemPosition)(this.getPositionParams(this.props), this.props.x, this.props.y, this.props.w, this.props.h, this.state);
+      var newPosition = (0, _calculateUtils.calcGridItemPosition)(this.getPositionParams(nextProps), nextProps.x, nextProps.y, nextProps.w, nextProps.h, nextState);
+      return !(0, _utils.fastPositionEqual)(oldPosition, newPosition) || this.props.useCSSTransforms !== nextProps.useCSSTransforms;
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.moveDroppingItem({});
+    }
+  }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate(prevProps
     /*: Props*/
@@ -223,12 +244,12 @@ function (_React$Component) {
     /*: Props*/
     ) {
       var droppingPosition = this.props.droppingPosition;
-      var prevDroppingPosition = prevProps.droppingPosition;
+      if (!droppingPosition) return;
+      var prevDroppingPosition = prevProps.droppingPosition || {
+        left: 0,
+        top: 0
+      };
       var dragging = this.state.dragging;
-
-      if (!droppingPosition || !prevDroppingPosition) {
-        return;
-      }
 
       if (!this.currentNode) {
         // eslint-disable-next-line react/no-find-dom-node
@@ -262,13 +283,16 @@ function (_React$Component) {
     value: function getPositionParams()
     /*: PositionParams*/
     {
+      var props
+      /*: Props*/
+      = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
       return {
-        cols: this.props.cols,
-        containerPadding: this.props.containerPadding,
-        containerWidth: this.props.containerWidth,
-        margin: this.props.margin,
-        maxRows: this.props.maxRows,
-        rowHeight: this.props.rowHeight
+        cols: props.cols,
+        containerPadding: props.containerPadding,
+        containerWidth: props.containerWidth,
+        margin: props.margin,
+        maxRows: props.maxRows,
+        rowHeight: props.rowHeight
       };
     }
     /**
@@ -319,10 +343,13 @@ function (_React$Component) {
     key: "mixinDraggable",
     value: function mixinDraggable(child
     /*: ReactElement<any>*/
+    , isDraggable
+    /*: boolean*/
     )
     /*: ReactElement<any>*/
     {
       return _react.default.createElement(_reactDraggable.DraggableCore, {
+        disabled: !isDraggable,
         onStart: this.onDragStart,
         onDrag: this.onDrag,
         onStop: this.onDragStop,
@@ -344,6 +371,8 @@ function (_React$Component) {
     /*: ReactElement<any>*/
     , position
     /*: Position*/
+    , isResizable
+    /*: boolean*/
     )
     /*: ReactElement<any>*/
     {
@@ -357,13 +386,17 @@ function (_React$Component) {
           transformScale = _this$props3.transformScale;
       var positionParams = this.getPositionParams(); // This is the max possible width - doesn't go to infinity because of the width of the window
 
-      var maxWidth = (0, _calculateUtils.calcPosition)(positionParams, 0, 0, cols - x, 0).width; // Calculate min/max constraints using our min & maxes
+      var maxWidth = (0, _calculateUtils.calcGridItemPosition)(positionParams, 0, 0, cols - x, 0).width; // Calculate min/max constraints using our min & maxes
 
-      var mins = (0, _calculateUtils.calcPosition)(positionParams, 0, 0, minW, minH);
-      var maxes = (0, _calculateUtils.calcPosition)(positionParams, 0, 0, maxW, maxH);
+      var mins = (0, _calculateUtils.calcGridItemPosition)(positionParams, 0, 0, minW, minH);
+      var maxes = (0, _calculateUtils.calcGridItemPosition)(positionParams, 0, 0, maxW, maxH);
       var minConstraints = [mins.width, mins.height];
       var maxConstraints = [Math.min(maxes.width, maxWidth), Math.min(maxes.height, Infinity)];
       return _react.default.createElement(_reactResizable.Resizable, {
+        draggableOpts: {
+          disabled: !isResizable
+        },
+        className: isResizable ? undefined : "react-resizable-hide",
         width: position.width,
         height: position.height,
         minConstraints: minConstraints,
@@ -444,7 +477,7 @@ function (_React$Component) {
           isResizable = _this$props5.isResizable,
           droppingPosition = _this$props5.droppingPosition,
           useCSSTransforms = _this$props5.useCSSTransforms;
-      var pos = (0, _calculateUtils.calcPosition)(this.getPositionParams(), x, y, w, h, this.state);
+      var pos = (0, _calculateUtils.calcGridItemPosition)(this.getPositionParams(), x, y, w, h, this.state);
 
       var child = _react.default.Children.only(this.props.children); // Create the child element. We clone the existing element but modify its className and style.
 
@@ -463,9 +496,9 @@ function (_React$Component) {
       }); // Resizable support. This is usually on but the user can toggle it off.
 
 
-      if (isResizable) newChild = this.mixinResizable(newChild, pos); // Draggable support. This is always on, except for with placeholders.
+      newChild = this.mixinResizable(newChild, pos, isResizable); // Draggable support. This is always on, except for with placeholders.
 
-      if (isDraggable) newChild = this.mixinDraggable(newChild);
+      newChild = this.mixinDraggable(newChild, isDraggable);
       return newChild;
     }
   }]);

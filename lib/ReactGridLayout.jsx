@@ -1,7 +1,6 @@
 // @flow
 import React from "react";
-
-import isEqual from "lodash.isequal";
+import { chain, isEqual } from "lodash.isequal";
 import classNames from "classnames";
 import {
   autoBindHandlers,
@@ -58,6 +57,13 @@ type State = {
 import type { Props } from "./ReactGridLayoutPropTypes";
 
 // End Types
+
+// https://stackoverflow.com/questions/37065663/array-of-object-deep-comparison-with-lodash
+const isArrayEqual = function(x, y) {
+  return chain(x)
+    .xorWith(y, isEqual)
+    .isEmpty();
+};
 
 const layoutClassName = "react-grid-layout";
 let isFirefox = false;
@@ -349,7 +355,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   onLayoutMaybeChanged(newLayout: Layout, oldLayout: ?Layout) {
     if (!oldLayout) oldLayout = this.state.layout;
 
-    if (!isEqual(oldLayout, newLayout)) {
+    if (!isArrayEqual(oldLayout, newLayout)) {
       this.props.onLayoutChange(newLayout);
     }
   }
