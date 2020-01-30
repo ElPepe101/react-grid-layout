@@ -9,7 +9,9 @@ var _react = _interopRequireDefault(require("react"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _lodash = require("lodash.isequal");
+var _lodash = _interopRequireDefault(require("lodash.isequal"));
+
+var _core = _interopRequireDefault(require("lodash/core"));
 
 var _classnames = _interopRequireDefault(require("classnames"));
 
@@ -187,8 +189,8 @@ function _defineProperty(obj, key, value) {
 // End Types
 // https://stackoverflow.com/questions/37065663/array-of-object-deep-comparison-with-lodash
 var isArrayEqual = function isArrayEqual(x, y) {
-  return (0, _lodash.chain)(x)
-    .xorWith(y, _lodash.isEqual)
+  return (0, _core.default)(x)
+    .xorWith(y, _lodash.default)
     .isEmpty();
 };
 
@@ -958,7 +960,7 @@ var ReactGridLayout =
             // Allow parent to set layout directly.
 
             if (
-              !(0, _lodash.isEqual)(nextProps.layout, prevState.propsLayout) ||
+              !(0, _lodash.default)(nextProps.layout, prevState.propsLayout) ||
               nextProps.compactType !== prevState.compactType
             ) {
               newLayoutBase = nextProps.layout;

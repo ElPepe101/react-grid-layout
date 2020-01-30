@@ -1,7 +1,8 @@
 // @flow
 import React from "react";
 import PropTypes from "prop-types";
-import { chain, isEqual } from "lodash.isequal";
+import isEqual from "lodash.isequal";
+import _ from "lodash/core";
 import classNames from "classnames";
 import {
   autoBindHandlers,
@@ -98,7 +99,7 @@ export type Props = {
 
 // https://stackoverflow.com/questions/37065663/array-of-object-deep-comparison-with-lodash
 const isArrayEqual = function(x, y) {
-  return chain(x)
+  return _(x)
     .xorWith(y, isEqual)
     .isEmpty();
 };
