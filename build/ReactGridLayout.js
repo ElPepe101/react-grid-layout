@@ -9,7 +9,7 @@ var _react = _interopRequireDefault(require("react"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _lodash = _interopRequireDefault(require("lodash.isequal"));
+var _lodash = require("lodash.isequal");
 
 var _classnames = _interopRequireDefault(require("classnames"));
 
@@ -185,10 +185,18 @@ function _defineProperty(obj, key, value) {
 }
 
 // End Types
+// https://stackoverflow.com/questions/37065663/array-of-object-deep-comparison-with-lodash
+var isArrayEqual = function isArrayEqual(x, y) {
+  return (0, _lodash.chain)(x)
+    .xorWith(y, _lodash.isEqual)
+    .isEmpty();
+};
+
 var compactType = function compactType(
-  props /*: CompactType*/
+  props
   /*: Props*/
-) {
+) /*: CompactType*/
+{
   var _ref = props || {},
     verticalCompact = _ref.verticalCompact,
     compactType = _ref.compactType;
@@ -618,7 +626,7 @@ var ReactGridLayout =
           ) {
             if (!oldLayout) oldLayout = this.state.layout;
 
-            if (!(0, _lodash.default)(oldLayout, newLayout)) {
+            if (!isArrayEqual(oldLayout, newLayout)) {
               this.props.onLayoutChange(newLayout);
             }
           }
@@ -767,7 +775,8 @@ var ReactGridLayout =
         },
         {
           key: "placeholder",
-          value: function placeholder /*: ?ReactElement<any>*/() {
+          value: function placeholder() /*: ?ReactElement<any>*/
+          {
             var activeDrag = this.state.activeDrag;
             if (!activeDrag) return null;
             var _this$props5 = this.props,
@@ -814,9 +823,10 @@ var ReactGridLayout =
           value: function processGridItem(
             child,
             /*: ReactElement<any>*/
-            isDroppingItem /*: ?ReactElement<any>*/
+            isDroppingItem
             /*: boolean*/
-          ) {
+          ) /*: ?ReactElement<any>*/
+          {
             if (!child || !child.key) return;
             var l = (0, _utils.getLayoutItem)(
               this.state.layout,
@@ -948,7 +958,7 @@ var ReactGridLayout =
             // Allow parent to set layout directly.
 
             if (
-              !(0, _lodash.default)(nextProps.layout, prevState.propsLayout) ||
+              !(0, _lodash.isEqual)(nextProps.layout, prevState.propsLayout) ||
               nextProps.compactType !== prevState.compactType
             ) {
               newLayoutBase = nextProps.layout;
