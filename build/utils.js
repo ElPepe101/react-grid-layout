@@ -158,13 +158,23 @@ function childrenEqual(
   /*: ReactChildren*/
 ) {
   /*: boolean*/
-  return (0, _lodash.default)(
-    _react.default.Children.map(a, function(c) {
-      return c.key;
-    }),
-    _react.default.Children.map(b, function(c) {
-      return c.key;
-    })
+  return (
+    (0, _lodash.default)(
+      _react.default.Children.map(a, function(c) {
+        return c.key;
+      }),
+      _react.default.Children.map(b, function(c) {
+        return c.key;
+      })
+    ) &&
+    (0, _lodash.default)(
+      _react.default.Children.map(a, function(c) {
+        return c.props["data-grid"];
+      }),
+      _react.default.Children.map(b, function(c) {
+        return c.props["data-grid"];
+      })
+    )
   );
 }
 /**
@@ -754,7 +764,11 @@ function synchronizeLayoutWithChildren(
     // Don't overwrite if it already exists.
     var exists = getLayoutItem(initialLayout, String(child.key));
 
-    if (exists) {
+    if (
+      exists &&
+      child.props["data-grid"] === undefined &&
+      child.props._grid === undefined
+    ) {
       layout[i] = cloneLayoutItem(exists);
     } else {
       if (!isProduction && child.props._grid) {
