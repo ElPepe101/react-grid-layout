@@ -19,16 +19,18 @@ exports.calcWH = calcWH;
   maxRows: number
 };*/
 // Helper for generating column width
-function calcGridColWidth(positionParams
-/*: PositionParams*/
-)
-/*: number*/
-{
+function calcGridColWidth(
+  positionParams
+  /*: PositionParams*/
+) {
+  /*: number*/
   var margin = positionParams.margin,
-      containerPadding = positionParams.containerPadding,
-      containerWidth = positionParams.containerWidth,
-      cols = positionParams.cols;
-  return (containerWidth - margin[0] * (cols - 1) - containerPadding[0] * 2) / cols;
+    containerPadding = positionParams.containerPadding,
+    containerWidth = positionParams.containerWidth,
+    cols = positionParams.cols;
+  return (
+    (containerWidth - margin[0] * (cols - 1) - containerPadding[0] * 2) / cols
+  );
 }
 /**
  * Return position on the page given an x, y, w, h.
@@ -41,25 +43,24 @@ function calcGridColWidth(positionParams
  * @return {Position}                       Object containing coords.
  */
 
-
-function calcGridItemPosition(positionParams
-/*: PositionParams*/
-, x
-/*: number*/
-, y
-/*: number*/
-, w
-/*: number*/
-, h
-/*: number*/
-, state
-/*: ?Object*/
-)
-/*: Position*/
-{
+function calcGridItemPosition(
+  positionParams,
+  /*: PositionParams*/
+  x,
+  /*: number*/
+  y,
+  /*: number*/
+  w,
+  /*: number*/
+  h,
+  /*: number*/
+  state
+  /*: ?Object*/
+) {
+  /*: Position*/
   var margin = positionParams.margin,
-      containerPadding = positionParams.containerPadding,
-      rowHeight = positionParams.rowHeight;
+    containerPadding = positionParams.containerPadding,
+    rowHeight = positionParams.rowHeight;
   var colWidth = calcGridColWidth(positionParams);
   var out = {}; // If resizing, use the exact width and height as returned from resizing callbacks.
 
@@ -68,22 +69,27 @@ function calcGridItemPosition(positionParams
     out.height = Math.round(state.resizing.height);
   } // Otherwise, calculate from grid units.
   else {
-      // 0 * Infinity === NaN, which causes problems with resize constraints;
-      // Fix this if it occurs.
-      // Note we do it here rather than later because Math.round(Infinity) causes deopt
-      out.width = w === Infinity ? w : Math.round(colWidth * w + Math.max(0, w - 1) * margin[0]);
-      out.height = h === Infinity ? h : Math.round(rowHeight * h + Math.max(0, h - 1) * margin[1]);
-    } // If dragging, use the exact width and height as returned from dragging callbacks.
-
+    // 0 * Infinity === NaN, which causes problems with resize constraints;
+    // Fix this if it occurs.
+    // Note we do it here rather than later because Math.round(Infinity) causes deopt
+    out.width =
+      w === Infinity
+        ? w
+        : Math.round(colWidth * w + Math.max(0, w - 1) * margin[0]);
+    out.height =
+      h === Infinity
+        ? h
+        : Math.round(rowHeight * h + Math.max(0, h - 1) * margin[1]);
+  } // If dragging, use the exact width and height as returned from dragging callbacks.
 
   if (state && state.dragging) {
     out.top = Math.round(state.dragging.top);
     out.left = Math.round(state.dragging.left);
   } // Otherwise, calculate from grid units.
   else {
-      out.top = Math.round((rowHeight + margin[1]) * y + containerPadding[1]);
-      out.left = Math.round((colWidth + margin[0]) * x + containerPadding[0]);
-    }
+    out.top = Math.round((rowHeight + margin[1]) * y + containerPadding[1]);
+    out.left = Math.round((colWidth + margin[0]) * x + containerPadding[0]);
+  }
 
   return out;
 }
@@ -97,24 +103,23 @@ function calcGridItemPosition(positionParams
  * @return {Object}                         x and y in grid units.
  */
 
-
-function calcXY(positionParams
-/*: PositionParams*/
-, top
-/*: number*/
-, left
-/*: number*/
-, w
-/*: number*/
-, h
-/*: number*/
-)
-/*: { x: number, y: number }*/
-{
+function calcXY(
+  positionParams,
+  /*: PositionParams*/
+  top,
+  /*: number*/
+  left,
+  /*: number*/
+  w,
+  /*: number*/
+  h
+  /*: number*/
+) {
+  /*: { x: number, y: number }*/
   var margin = positionParams.margin,
-      cols = positionParams.cols,
-      rowHeight = positionParams.rowHeight,
-      maxRows = positionParams.maxRows;
+    cols = positionParams.cols,
+    rowHeight = positionParams.rowHeight,
+    maxRows = positionParams.maxRows;
   var colWidth = calcGridColWidth(positionParams); // left = colWidth * x + margin * (x + 1)
   // l = cx + m(x+1)
   // l = cx + mx + m
@@ -143,24 +148,23 @@ function calcXY(positionParams
  * @return {Object}                         w, h as grid units.
  */
 
-
-function calcWH(positionParams
-/*: PositionParams*/
-, width
-/*: number*/
-, height
-/*: number*/
-, x
-/*: number*/
-, y
-/*: number*/
-)
-/*: { w: number, h: number }*/
-{
+function calcWH(
+  positionParams,
+  /*: PositionParams*/
+  width,
+  /*: number*/
+  height,
+  /*: number*/
+  x,
+  /*: number*/
+  y
+  /*: number*/
+) {
+  /*: { w: number, h: number }*/
   var margin = positionParams.margin,
-      maxRows = positionParams.maxRows,
-      cols = positionParams.cols,
-      rowHeight = positionParams.rowHeight;
+    maxRows = positionParams.maxRows,
+    cols = positionParams.cols,
+    rowHeight = positionParams.rowHeight;
   var colWidth = calcGridColWidth(positionParams); // width = colWidth * w - (margin * (w - 1))
   // ...
   // w = (width + margin) / (colWidth + margin)
